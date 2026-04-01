@@ -1,23 +1,19 @@
-POST http://localhost:3333/videos
+POST http://localhost:3333/products
 Content-Type: application/json
 
-
 {
-  "title": "Video 01",
-  "description": "Esse é meu primeiro video",
-  "duration": 120
+  "name": "Felipe"
 }
-
 
 ###
-GET http://localhost:3333/videos
+GET http://localhost:3333/products
 
-### 
-PUT http://localhost:3333/videos/c231cde9-0931-4dca-aa3a-dfa86d1ba1d6
+###
+PUT http://localhost:3333/products/eaf67202-a0d4-4423-94ba-0745a23c33c2
 Content-Type: application/json
 
 {
-  "title": "Video 02",
-  "description": "Esse é meu primeiro",
-  "duration": 120
+  "name": "Gabriel"
 }
+###
+DELETE http://localhost:3333/products/

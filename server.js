@@ -1,49 +1,62 @@
+import chalk from "chalk"
+import express from "express"
+import { randomUUID } from "crypto"
+import { json } from "stream/consumers"
 
 
-import { fastify } from "fastify"
-import { DatabaseMemory } from "./database-memory.js"
+const server = express()
 
-const server = fastify()
+server.use(express.json())
 
-const database = new DatabaseMemory()
+const products = []
 
-server.post("/videos", (req, reply) => {
-  const { title, description, duration } = req.body
-
-  database.create({
-    title,
-    description,
-    duration
-  })
-
-  console.log(database.list())
-
-  return reply.status(201).send()
+server.get("/products", (req, res) => {
+  res.send(products)
 })
 
-server.get("/videos", () => {
-  const videos = database.list()
+server.post("/products", (req, res) => {
+  const { name } = req.body
 
-  return videos
+  const newValue = {
+    id: crypto.randomUUID(),
+    name
+  }
+
+  products.push(newValue)
+
+  res.status(201).json(products)
 })
 
-server.put("/videos/:id", (req, reply) => {
-  const videoId = req.params.id
-  const { title, description, duration } = req.body
+server.put("/products/:id", (req, res) => {
+  const { id } = req.params
+  const { name } = req.body
 
-  database.update(videoId, {
-    title,
-    description,
-    duration
-  })
+  const findProduct = products.find(p => p.id === id)
 
-  return reply.status(204).send()
+  if (findProduct) {
+    findProduct.name = name
+    res.status(201).json(products)
+
+  } else if (!findProduct) {
+    res.status(404).send({ message: "Produto não foi encontrado" })
+  }
+
 })
 
-server.delete("/videos/:id", () => {
-  return "Hello Node"
+server.delete("/products/:id", (req, res) => {
+  const { id } = req.params
+
+  const newValue = products.filter(p => p.id !== id)
+
+  products.push(newValue)
+
+  res.status(200).json({ message: "Produto removido com succeso!" })
+
+
 })
 
-server.listen({
-  port: 3333,
+
+server.listen(3333, () => {
+  console.log(chalk.green("✔ Servidor rodando na porta 3333 ✔ "))
 })
+
